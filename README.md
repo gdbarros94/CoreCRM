@@ -1,6 +1,6 @@
-# CoreCRM
+# iNovaCRM
 
-**CoreCRM** é um sistema de CRM (Customer Relationship Management) modular, construído em PHP puro, com arquitetura baseada em plugins, sistema de rotas dinâmicas, autenticação, API REST e um robusto sistema de *hooks* e *actions* para extensão de funcionalidades.
+**iNovaCRM** é um sistema de CRM (Customer Relationship Management) modular, construído em PHP puro, com arquitetura baseada em plugins, sistema de rotas dinâmicas, autenticação, API REST e um robusto sistema de *hooks* e *actions* para extensão de funcionalidades.
 
 > Este projeto foi desenvolvido em sala de aula por Gabriel Barros e a turma V1 do curso técnico em Desenvolvimento de Sistemas do Senac Novo Hamburgo.
 
