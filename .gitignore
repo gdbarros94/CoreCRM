@@ -1,7 +1,7 @@
 # Arquivos temporários e logs
 *.log
 *.tmp
-
+composer.lock
 # Configuração do banco de dados
 /config/
 

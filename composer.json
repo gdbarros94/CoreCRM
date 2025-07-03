@@ -1,0 +1,15 @@
+{
+    "name": "corecrm/corecrm",
+    "description": "A brief description of your package",
+    "type": "library",
+    "require": {
+        "ramsey/uuid": "^4.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

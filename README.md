@@ -50,16 +50,22 @@
 
 1. Clone o repositório:
 
-   ```bash
-   git clone https://github.com/gdbarros/corecrm.git
-   cd corecrm
-   ```
+  ```bash
+  git clone https://github.com/gdbarros/corecrm.git
+  cd corecrm
+  ```
 
-2. Configure seu banco de dados em `config/database.config.php`
+2. Execute o Composer para instalar as dependências:
 
-3. Altere `config/config.php` com as configurações globais do sistema
+  ```bash
+  php composer.phar install
+  ```
 
-4. Acesse `index.php` no navegador
+3. Configure seu banco de dados em `config/database.config.php`
+
+4. Altere `config/config.php` com as configurações globais do sistema
+
+5. Acesse `index.php` no navegador
 
 ---
 
