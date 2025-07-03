@@ -1,0 +1,15 @@
+{
+  "name": "System Manager",
+  "slug": "sys_manager",
+  "version": "1.0",
+  "description": "Plugin to manage system settings, user roles, and permissions.",
+  "author": ["Luiz Gustavo D. Pulz", "Demais colaboradores"],
+  "routes": [
+    "/admin",
+    "/login",
+    "/logout"
+  ],
+  "hooks": [
+    "after_gerar_relatorio" 
+  ]
+}
