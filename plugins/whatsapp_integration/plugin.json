@@ -1,0 +1,11 @@
+{
+    "name": "Whatsapp integration",
+    "slug": "wpp_integration",
+    "version": "1.0",
+    "description": "Plugin to get and send messages to whatsapp",
+    "author": ["me"],
+    "routes": [
+      "/webhook"
+    ],
+    "hooks": []
+  }

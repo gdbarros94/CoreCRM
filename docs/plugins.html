@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desenvolvimento de Plugins para o CoreCRM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="desenvolvimento-de-plugins-para-o-corecrm">Desenvolvimento de Plugins para o CoreCRM</h1>
+        <p>O CoreCRM foi projetado com a extensibilidade em mente, e o sistema de plugins é o principal mecanismo para adicionar novas funcionalidades ou modificar o comportamento existente sem alterar o código-fonte principal. Este guia detalha como criar e desenvolver plugins para o CoreCRM.</p>
+        <h2 id="estrutura-de-um-plugin">Estrutura de um Plugin</h2>
+        <p>Cada plugin no CoreCRM deve residir em seu próprio subdiretório dentro da pasta <code>plugins/</code> e conter, no mínimo, dois arquivos essenciais:</p>
+        <ol type="1">
+        <li><strong><code>plugin.json</code></strong>: Um arquivo de metadados que descreve o plugin.</li>
+        <li><strong><code>main.php</code></strong>: O arquivo principal do plugin, onde a lógica e as funcionalidades são implementadas.</li>
+        </ol>
+        <h3 id="exemplo-de-estrutura-de-diretório-de-plugin">Exemplo de Estrutura de Diretório de Plugin</h3>
+        <pre><code>plugins/
+        ├── MeuPlugin/
+        │   ├── plugin.json
+        │   └── main.php
+        │   └── assets/ (opcional)
+        │   └── views/ (opcional)
+        └── OutroPlugin/
+            ├── plugin.json
+            └── main.php</code></pre>
+        <h3 id="plugin.json"><code>plugin.json</code></h3>
+        <p>O arquivo <code>plugin.json</code> é um manifesto JSON que fornece informações cruciais sobre o seu plugin. Ele é lido pelo CoreCRM para identificar e carregar o plugin corretamente. Os campos comuns incluem:</p>
+        <ul>
+        <li><strong><code>name</code></strong>: (Obrigatório) O nome legível do seu plugin.</li>
+        <li><strong><code>slug</code></strong>: (Obrigatório) Um identificador único e amigável para o seu plugin (geralmente em minúsculas e sem espaços).</li>
+        <li><strong><code>version</code></strong>: (Obrigatório) A versão atual do seu plugin.</li>
+        <li><strong><code>description</code></strong>: (Opcional) Uma breve descrição do que o plugin faz.</li>
+        <li><strong><code>author</code></strong>: (Opcional) O nome do autor ou da equipe de desenvolvimento.</li>
+        <li><strong><code>routes</code></strong>: (Opcional) Um array de rotas que este plugin irá gerenciar. Isso permite que o <code>RoutesHandler</code> saiba quais URLs devem ser direcionadas para o seu plugin.</li>
+        </ul>
+        <p><strong>Exemplo de <code>plugin.json</code>:</strong></p>
+        <div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">{</span></span>
+        <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Gerenciador de Clientes&quot;</span><span class="fu">,</span></span>
+        <span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  <span class="dt">&quot;slug&quot;</span><span class="fu">:</span> <span class="st">&quot;clientes&quot;</span><span class="fu">,</span></span>
+        <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0.0&quot;</span><span class="fu">,</span></span>
+        <span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Gerencia informações de clientes e seus contatos.&quot;</span><span class="fu">,</span></span>
+        <span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>  <span class="dt">&quot;author&quot;</span><span class="fu">:</span> <span class="st">&quot;Seu Nome ou Empresa&quot;</span><span class="fu">,</span></span>
+        <span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>  <span class="dt">&quot;routes&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+        <span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>    <span class="st">&quot;/clientes&quot;</span><span class="ot">,</span></span>
+        <span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>    <span class="st">&quot;/clientes/novo&quot;</span><span class="ot">,</span></span>
+        <span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>    <span class="st">&quot;/clientes/editar/{id}&quot;</span></span>
+        <span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>  <span class="ot">]</span></span>
+        <span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+        <h3 id="main.php"><code>main.php</code></h3>
+        <p>O arquivo <code>main.php</code> é o ponto de entrada principal do seu plugin. É aqui que você registrará seus hooks, definirá suas funções, classes e qualquer lógica específica do plugin. Este arquivo será incluído pelo CoreCRM quando o plugin for carregado.</p>
+        <p><strong>Exemplo Básico de <code>main.php</code>:</strong></p>
+        <div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">&lt;?php</span></span>
+        <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="co">// Seu código PHP para o plugin</span></span>
+        <span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a></span>
+        <span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="co">// Exemplo: Registrar um hook para adicionar um item ao menu de administração</span></span>
+        <span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>HookHandler::register_hook<span class="ot">(</span></span>
+        <span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    <span class="st">&quot;admin_menu_items&quot;</span><span class="ot">,</span></span>
+        <span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    <span class="kw">function</span><span class="ot">(</span><span class="kw">$menu_items</span><span class="ot">)</span> {</span>
+        <span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>        <span class="kw">$menu_items</span><span class="ot">[</span><span class="st">&quot;clientes&quot;</span><span class="ot">]</span> = <span class="ot">[</span></span>
+        <span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>            <span class="st">&quot;title&quot;</span> =&gt; <span class="st">&quot;Clientes&quot;</span><span class="ot">,</span></span>
+        <span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>            <span class="st">&quot;url&quot;</span> =&gt; <span class="st">&quot;/admin/clientes&quot;</span><span class="ot">,</span></span>
+        <span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>            <span class="st">&quot;icon&quot;</span> =&gt; <span class="st">&quot;users&quot;</span></span>
+        <span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>        <span class="ot">];</span></span>
+        <span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>        <span class="kw">return</span> <span class="kw">$menu_items</span><span class="ot">;</span></span>
+        <span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>    }<span class="ot">,</span></span>
+        <span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>    <span class="st">&quot;filter&quot;</span> <span class="co">// Exemplo de um hook de filtro (ainda não implementado no CoreCRM, mas comum em sistemas de hooks)</span></span>
+        <span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a><span class="ot">);</span></span>
+        <span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a></span>
+        <span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a><span class="co">// Exemplo: Criar uma rota para o plugin</span></span>
+        <span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>RoutesHandler::addRoute<span class="ot">(</span></span>
+        <span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a>    <span class="st">&quot;/clientes&quot;</span><span class="ot">,</span></span>
+        <span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a>    <span class="kw">function</span><span class="ot">()</span> {</span>
+        <span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a>        <span class="co">// Lógica para exibir a lista de clientes</span></span>
+        <span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a>        <span class="kw">echo</span> <span class="st">&quot;&lt;h1&gt;Lista de Clientes&lt;/h1&gt;&quot;</span><span class="ot">;</span></span>
+        <span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a>    }</span>
+        <span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a><span class="ot">);</span></span>
+        <span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a></span>
+        <span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a><span class="co">// Exemplo: Adicionar um endpoint de API para o plugin</span></span>
+        <span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a>HookHandler::register_hook<span class="ot">(</span></span>
+        <span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a>    <span class="st">&quot;api_clientes_listar&quot;</span><span class="ot">,</span></span>
+        <span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a>    <span class="kw">function</span><span class="ot">()</span> {</span>
+        <span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a>        <span class="co">// Lógica para listar clientes via API</span></span>
+        <span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a>        <span class="kw">$clientes</span> = <span class="ot">[</span></span>
+        <span id="cb3-33"><a href="#cb3-33" aria-hidden="true"></a>            <span class="ot">[</span><span class="st">&quot;id&quot;</span> =&gt; <span class="dv">1</span><span class="ot">,</span> <span class="st">&quot;nome&quot;</span> =&gt; <span class="st">&quot;Cliente A&quot;</span><span class="ot">],</span></span>
+        <span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a>            <span class="ot">[</span><span class="st">&quot;id&quot;</span> =&gt; <span class="dv">2</span><span class="ot">,</span> <span class="st">&quot;nome&quot;</span> =&gt; <span class="st">&quot;Cliente B&quot;</span><span class="ot">]</span></span>
+        <span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a>        <span class="ot">];</span></span>
+        <span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a>        APIHandler::sendJsonResponse<span class="ot">(</span><span class="kw">$clientes</span><span class="ot">);</span></span>
+        <span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a>    }<span class="ot">,</span></span>
+        <span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a>    <span class="st">&quot;before&quot;</span> <span class="co">// Executa antes do erro 404 do APIHandler</span></span>
+        <span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a><span class="ot">);</span></span>
+        <span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a></span>
+        <span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a><span class="co">// Outras classes e funções do seu plugin podem ser definidas aqui ou em arquivos separados e incluídas.</span></span></code></pre></div>
+        <h2 id="utilizando-o-sistema-de-hooks-e-actions-hookhandler">Utilizando o Sistema de Hooks e Actions (<code>HookHandler</code>)</h2>
+        <p>O sistema de hooks e actions é a maneira mais poderosa de estender o CoreCRM. Ele permite que seu plugin execute código em momentos específicos do ciclo de vida da aplicação, sem a necessidade de modificar o código-fonte principal. A classe <code>HookHandler</code> gerencia este sistema.</p>
+        <h3 id="hookhandlerregister_hookstring-actionname-callable-callback-string-when-after-int-priority-10"><code>HookHandler::register_hook(string $actionName, callable $callback, string $when = 'after', int $priority = 10)</code></h3>
+        <p>Este método é usado para registrar uma função de callback (seu código) para ser executada quando uma ação específica (<code>$actionName</code>) for disparada.</p>
+        <ul>
+        <li><strong><code>$actionName</code></strong>: O nome da ação à qual você deseja se</li>
+        </ul>
+        <p>engatar. Por exemplo, <code>"user_login"</code>, <code>"api_clientes_listar"</code>. * <strong><code>$callback</code></strong>: A função PHP (pode ser uma função anônima, nome de função ou método de classe) que será executada quando o hook for acionado. * <strong><code>$when</code></strong>: (Opcional) Define quando o hook deve ser executado em relação à ação principal. Pode ser <code>"before"</code> (antes da ação principal) ou <code>"after"</code> (depois da ação principal). O padrão é <code>"after"</code>. * <strong><code>$priority</code></strong>: (Opcional) Um número inteiro que define a ordem de execução dos hooks para a mesma ação. Hooks com menor número de prioridade são executados primeiro. O padrão é <code>10</code>.</p>
+        <p><strong>Exemplo de Uso:</strong></p>
+        <div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">// Registrar um hook para ser executado antes de uma ação de salvamento de dados</span></span>
+        <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>HookHandler::register_hook<span class="ot">(</span></span>
+        <span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    <span class="st">&quot;data_save&quot;</span><span class="ot">,</span></span>
+        <span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>    <span class="kw">function</span><span class="ot">(</span><span class="kw">$data_to_save</span><span class="ot">)</span> {</span>
+        <span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        <span class="co">// Lógica para validar ou modificar os dados antes de salvar</span></span>
+        <span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>        <span class="fu">System</span>::<span class="fu">log</span><span class="ot">(</span><span class="st">&quot;Dados prestes a serem salvos: &quot;</span> . <span class="fu">json_encode</span><span class="ot">(</span><span class="kw">$data_to_save</span><span class="ot">));</span></span>
+        <span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>        <span class="kw">return</span> <span class="kw">$data_to_save</span><span class="ot">;</span> <span class="co">// Se for um filtro, retorne os dados modificados</span></span>
+        <span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>    }<span class="ot">,</span></span>
+        <span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>    <span class="st">&quot;before&quot;</span><span class="ot">,</span></span>
+        <span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>    <span class="dv">5</span> <span class="co">// Prioridade alta, executa antes de outros hooks</span></span>
+        <span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a><span class="ot">);</span></span>
+        <span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a></span>
+        <span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a><span class="co">// Registrar um hook para ser executado após a criação de um usuário</span></span>
+        <span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>HookHandler::register_hook<span class="ot">(</span></span>
+        <span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a>    <span class="st">&quot;user_created&quot;</span><span class="ot">,</span></span>
+        <span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a>    <span class="kw">function</span><span class="ot">(</span><span class="kw">$user_id</span><span class="ot">,</span> <span class="kw">$user_data</span><span class="ot">)</span> {</span>
+        <span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a>        <span class="co">// Lógica para enviar um e-mail de boas-vindas ou registrar em outro sistema</span></span>
+        <span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a>        <span class="fu">System</span>::<span class="fu">log</span><span class="ot">(</span><span class="st">&quot;Novo usuário criado com ID: &quot;</span> . <span class="kw">$user_id</span><span class="ot">);</span></span>
+        <span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a>    }<span class="ot">,</span></span>
+        <span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a>    <span class="st">&quot;after&quot;</span><span class="ot">,</span></span>
+        <span id="cb4-21"><a href="#cb4-21" aria-hidden="true"></a>    <span class="dv">10</span></span>
+        <span id="cb4-22"><a href="#cb4-22" aria-hidden="true"></a><span class="ot">);</span></span></code></pre></div>
+        <h3 id="hookhandlerdo_actionstring-actionname-array-args-callable-actioncallback-null"><code>HookHandler::do_action(string $actionName, array $args = [], callable $actionCallback = null)</code></h3>
+        <p>Este método é usado para disparar uma ação, o que, por sua vez, executa todos os hooks registrados para essa ação.</p>
+        <ul>
+        <li><strong><code>$actionName</code></strong>: O nome da ação a ser disparada (deve corresponder ao <code>$actionName</code> usado em <code>register_hook</code>).</li>
+        <li><strong><code>$args</code></strong>: (Opcional) Um array de argumentos que serão passados para todas as funções de callback registradas para este hook. Certifique-se de que a assinatura da sua função de callback corresponda aos argumentos esperados.</li>
+        <li><strong><code>$actionCallback</code></strong>: (Opcional) Uma função de callback que representa a ação principal em si. Se fornecida, ela será executada entre os hooks <code>"before"</code> e <code>"after"</code>.</li>
+        </ul>
+        <p><strong>Exemplo de Uso:</strong></p>
+        <div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="co">// Em algum lugar do seu código principal ou de um handler</span></span>
+        <span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a></span>
+        <span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="co">// Disparar uma ação antes de processar um pedido</span></span>
+        <span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>HookHandler::do_action<span class="ot">(</span><span class="st">&quot;order_process_start&quot;</span><span class="ot">,</span> <span class="ot">[</span><span class="st">&quot;order_id&quot;</span> =&gt; <span class="dv">123</span><span class="ot">,</span> <span class="st">&quot;status&quot;</span> =&gt; <span class="st">&quot;pending&quot;</span><span class="ot">]);</span></span>
+        <span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a></span>
+        <span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="co">// Lógica principal de processamento do pedido</span></span>
+        <span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="co">// ...</span></span>
+        <span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a></span>
+        <span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a><span class="co">// Disparar uma ação após o processamento do pedido</span></span>
+        <span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>HookHandler::do_action<span class="ot">(</span><span class="st">&quot;order_processed&quot;</span><span class="ot">,</span> <span class="ot">[</span><span class="st">&quot;order_id&quot;</span> =&gt; <span class="dv">123</span><span class="ot">,</span> <span class="st">&quot;status&quot;</span> =&gt; <span class="st">&quot;completed&quot;</span><span class="ot">]);</span></span>
+        <span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a></span>
+        <span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a><span class="co">// Exemplo com actionCallback</span></span>
+        <span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a><span class="kw">$result</span> = HookHandler::do_action<span class="ot">(</span></span>
+        <span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a>    <span class="st">&quot;calculate_total&quot;</span><span class="ot">,</span></span>
+        <span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a>    <span class="ot">[</span><span class="st">&quot;items&quot;</span> =&gt; <span class="kw">$cart_items</span><span class="ot">],</span></span>
+        <span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a>    <span class="kw">function</span><span class="ot">(</span><span class="kw">$items</span><span class="ot">)</span> {</span>
+        <span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a>        <span class="kw">$total</span> = <span class="dv">0</span><span class="ot">;</span></span>
+        <span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a>        <span class="kw">foreach</span> <span class="ot">(</span><span class="kw">$items</span> <span class="kw">as</span> <span class="kw">$item</span><span class="ot">)</span> {</span>
+        <span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a>            <span class="kw">$total</span> += <span class="kw">$item</span><span class="ot">[</span><span class="st">&quot;price&quot;</span><span class="ot">]</span> * <span class="kw">$item</span><span class="ot">[</span><span class="st">&quot;quantity&quot;</span><span class="ot">];</span></span>
+        <span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a>        }</span>
+        <span id="cb5-21"><a href="#cb5-21" aria-hidden="true"></a>        <span class="kw">return</span> <span class="kw">$total</span><span class="ot">;</span></span>
+        <span id="cb5-22"><a href="#cb5-22" aria-hidden="true"></a>    }</span>
+        <span id="cb5-23"><a href="#cb5-23" aria-hidden="true"></a><span class="ot">);</span></span>
+        <span id="cb5-24"><a href="#cb5-24" aria-hidden="true"></a><span class="fu">System</span>::<span class="fu">log</span><span class="ot">(</span><span class="st">&quot;Total calculado: &quot;</span> . <span class="kw">$result</span><span class="ot">);</span></span></code></pre></div>
+        <h2 id="interagindo-com-outros-componentes-do-corecrm">Interagindo com Outros Componentes do CoreCRM</h2>
+        <p>Seu plugin pode e deve interagir com as classes principais do CoreCRM para acessar funcionalidades como banco de dados, autenticação e logging.</p>
+        <h3 id="system"><code>System</code></h3>
+        <p>Para registrar mensagens de log e depurar seu plugin:</p>
+        <ul>
+        <li><strong><code>System::log(string $message, string $level = 'info')</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Registra uma mensagem no arquivo de log do sistema. Essencial para depuração e monitoramento do comportamento do seu plugin.</li>
+        <li><strong>Exemplo:</strong> <code>php     System::log("Plugin 'MeuPlugin' ativado com sucesso.", "info");     System::log("Erro ao processar dados no plugin: " . $e-&gt;getMessage(), "error");</code></li>
+        </ul></li>
+        </ul>
+        <h3 id="authhandler"><code>AuthHandler</code></h3>
+        <p>Para verificar o status de autenticação ou permissões de usuários dentro do seu plugin:</p>
+        <ul>
+        <li><strong><code>AuthHandler::isLoggedIn(): bool</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Verifica se um usuário está logado.</li>
+        </ul></li>
+        <li><strong><code>AuthHandler::checkPermission(string $permission): bool</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Verifica se o usuário logado possui uma permissão específica.</li>
+        <li><strong>Exemplo:</strong> <code>php     if (AuthHandler::isLoggedIn() &amp;&amp; AuthHandler::checkPermission("manage_plugin_settings")) {         // Mostrar opções de configuração do plugin     } else {         // Acesso negado     }</code></li>
+        </ul></li>
+        </ul>
+        <h3 id="databasehandler-e-querybuilder"><code>DatabaseHandler</code> e <code>QueryBuilder</code></h3>
+        <p>Para interagir com o banco de dados e armazenar/recuperar dados específicos do seu plugin:</p>
+        <ul>
+        <li><strong><code>DatabaseHandler::getConnection(): PDO</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Retorna a instância da conexão PDO. Use com cautela, preferindo <code>QueryBuilder</code> sempre que possível.</li>
+        </ul></li>
+        <li><strong><code>DatabaseHandler::query(string $sql, array $params = []): PDOStatement</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Executa uma consulta SQL preparada.</li>
+        </ul></li>
+        <li><strong><code>DatabaseHandler::fetch(string $sql, array $params = []): array|false</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Retorna uma única linha de resultado.</li>
+        </ul></li>
+        <li><strong><code>DatabaseHandler::fetchAll(string $sql, array $params = []): array</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Retorna todas as linhas de resultado.</li>
+        </ul></li>
+        <li><strong><code>QueryBuilder</code></strong>: A maneira recomendada de interagir com o banco de dados. Permite construir consultas de forma fluente e segura.
+        <ul>
+        <li><p><strong>Exemplo de Uso:</strong></p>
+        <div class="sourceCode" id="cb6"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="co">// Inserir dados específicos do plugin</span></span>
+        <span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="ot">(</span><span class="kw">new</span> QueryBuilder<span class="ot">(</span><span class="st">&quot;plugin_settings&quot;</span><span class="ot">))</span>-&gt;insert<span class="ot">([</span></span>
+        <span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>    <span class="st">&quot;plugin_slug&quot;</span> =&gt; <span class="st">&quot;meu_plugin&quot;</span><span class="ot">,</span></span>
+        <span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>    <span class="st">&quot;setting_key&quot;</span> =&gt; <span class="st">&quot;api_key&quot;</span><span class="ot">,</span></span>
+        <span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>    <span class="st">&quot;setting_value&quot;</span> =&gt; <span class="st">&quot;sua_api_key_aqui&quot;</span></span>
+        <span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a><span class="ot">]);</span></span>
+        <span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a></span>
+        <span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a><span class="co">// Recuperar dados</span></span>
+        <span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a><span class="kw">$settings</span> = <span class="ot">(</span><span class="kw">new</span> QueryBuilder<span class="ot">(</span><span class="st">&quot;plugin_settings&quot;</span><span class="ot">))</span></span>
+        <span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>    -&gt;select<span class="ot">()</span></span>
+        <span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>    -&gt;where<span class="ot">(</span><span class="st">&quot;plugin_slug&quot;</span><span class="ot">,</span> <span class="st">&quot;meu_plugin&quot;</span><span class="ot">)</span></span>
+        <span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a>    -&gt;get<span class="ot">();</span></span></code></pre></div></li>
+        </ul></li>
+        </ul>
+        <h2 id="considerações-finais-para-o-desenvolvimento-de-plugins">Considerações Finais para o Desenvolvimento de Plugins</h2>
+        <ul>
+        <li><strong>Nomes Únicos</strong>: Certifique-se de que os nomes de suas classes, funções e slugs de plugins sejam únicos para evitar conflitos com outros plugins ou com o CoreCRM.</li>
+        <li><strong>Segurança</strong>: Sempre valide e sanitize os dados de entrada. Use consultas preparadas com <code>DatabaseHandler</code> ou <code>QueryBuilder</code> para evitar injeção SQL. Hash senhas com <code>AuthHandler::hashPassword()</code>.</li>
+        <li><strong>Performance</strong>: Otimize suas consultas de banco de dados e evite operações que consumam muitos recursos em loops.</li>
+        <li><strong>Documentação Interna</strong>: Comente seu código e forneça documentação clara para outros desenvolvedores que possam usar ou contribuir para o seu plugin.</li>
+        <li><strong>Testes</strong>: Teste seu plugin exaustivamente para garantir que ele funcione conforme o esperado e não introduza bugs no sistema principal.</li>
+        </ul>
+        <p>Seguindo estas diretrizes, você poderá desenvolver plugins robustos e bem integrados para o CoreCRM, estendendo suas funcionalidades de forma eficiente e segura.</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

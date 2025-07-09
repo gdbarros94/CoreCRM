@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitetura do Sistema CoreCRM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="arquitetura-do-sistema-corecrm">Arquitetura do Sistema CoreCRM</h1>
+        <p>A arquitetura do CoreCRM é projetada para ser modular, extensível e de fácil manutenção. O sistema é construído em PHP puro e segue um modelo de design que separa as preocupações, utilizando</p>
+        <p>handlers para gerenciar diferentes aspectos da aplicação. A seguir, detalhamos os principais componentes e sua interação.</p>
+        <h2 id="visão-geral-da-estrutura-de-pastas">Visão Geral da Estrutura de Pastas</h2>
+        <p>A organização do projeto é fundamental para a clareza e a manutenibilidade. O CoreCRM adota a seguinte estrutura de diretórios:</p>
+        <pre><code>/
+        ├── index.php             # Ponto de entrada principal da aplicação
+        ├── bootstrap.php         # Arquivo de inicialização do sistema
+        ├── config/               # Contém arquivos de configuração (e.g., database.config.php, config.php)
+        ├── core/                 # Contém as classes principais do sistema (handlers)
+        ├── plugins/              # Diretório para os plugins. Cada plugin tem seu próprio subdiretório
+        ├── themes/               # Diretório para os temas da interface do usuário
+        ├── assets/               # Recursos estáticos (CSS, JavaScript, imagens)
+        ├── logs/                 # Arquivos de log gerados pelo sistema
+        └── admin/                # Interface administrativa do sistema</code></pre>
+        <h2 id="componentes-principais-core">Componentes Principais (<code>core/</code>)</h2>
+        <p>O diretório <code>core/</code> abriga as classes fundamentais que compõem o coração do CoreCRM. Cada classe é um</p>
+        <p>handler responsável por uma funcionalidade específica, garantindo a modularidade e a separação de responsabilidades.</p>
+        <h3 id="system.php"><code>System.php</code></h3>
+        <p>Esta classe é a base do sistema, responsável pela inicialização, verificação de saúde e gerenciamento de logs. Ela garante que o ambiente esteja pronto para a execução da aplicação e fornece um mecanismo centralizado para o registro de eventos e erros.</p>
+        <p><strong>Métodos Chave:</strong></p>
+        <ul>
+        <li><strong><code>init()</code></strong>: O método de inicialização do sistema. Ele é responsável por chamar <code>healthCheck()</code> e, futuramente, <code>checkDatabaseIntegrity()</code> e <code>setupLogging()</code>. Deve ser chamado apenas uma vez no início da aplicação.</li>
+        <li><strong><code>healthCheck()</code></strong>: Realiza verificações essenciais para o funcionamento do sistema, como permissões de diretórios e a presença de extensões PHP necessárias. É um ponto crucial para garantir a estabilidade do ambiente.</li>
+        <li><strong><code>logMessage($logFile, $message)</code></strong>: Uma função utilitária para escrever mensagens em arquivos de log específicos. Ela gerencia a criação de diretórios e arquivos de log, se necessário, e garante que as mensagens sejam anexadas corretamente.</li>
+        <li><strong><code>log($message, $level)</code></strong>: A interface principal para o registro de logs no sistema. Permite categorizar as mensagens por nível de severidade (<code>info</code>, <code>warning</code>, <code>error</code>), facilitando a depuração e o monitoramento do sistema.</li>
+        <li><strong><code>getLogs()</code></strong>: Projetado para retornar os logs mais recentes, provavelmente para exibição na interface administrativa, auxiliando na depuração e monitoramento em tempo real.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>System.php</code> é utilizado por quase todos os outros componentes do CoreCRM para registrar eventos e erros, garantindo que o fluxo de execução seja monitorado e que quaisquer problemas sejam devidamente registrados. Ele é o ponto de partida para a estabilidade e observabilidade do sistema.</p>
+        <h3 id="apihandler.php"><code>APIHandler.php</code></h3>
+        <p>O <code>APIHandler</code> é o coração da comunicação externa do CoreCRM, expondo funcionalidades do sistema através de uma API RESTful. Ele lida com a autenticação de requisições, roteamento de endpoints e formatação de respostas em JSON, permitindo que outras aplicações interajam programaticamente com o CoreCRM.</p>
+        <p><strong>Métodos Chave:</strong></p>
+        <ul>
+        <li><strong><code>handleRequest($endpoint)</code></strong>: O método principal que recebe o endpoint da API e coordena o processo. Ele primeiro chama <code>authenticate()</code> e, se bem-sucedido, roteia a requisição para a função apropriada com base no endpoint. Em caso de endpoints não encontrados, ele utiliza o <code>HookHandler</code> para permitir que plugins adicionem ou modifiquem o comportamento padrão.</li>
+        <li><strong><code>authenticate()</code></strong>: Responsável por verificar a validade do token de autenticação presente no cabeçalho <code>Authorization</code> da requisição. Atualmente, utiliza um token simples de placeholder, mas é projetado para ser estendido para métodos de autenticação mais robustos (e.g., JWT).</li>
+        <li><strong><code>listClients()</code></strong>: Um exemplo de endpoint que demonstra a recuperação de dados do banco de dados (utilizando <code>DatabaseHandler</code> e <code>QueryBuilder</code>) e a formatação da resposta em JSON.</li>
+        <li><strong><code>createNewUser()</code></strong>: Outro exemplo de endpoint que mostra como processar dados de entrada (JSON) e interagir com o sistema para criar novos registros.</li>
+        <li><strong><code>sendJsonResponse($data, $statusCode)</code></strong>: Uma função utilitária para padronizar as respostas da API, enviando dados em formato JSON com o código de status HTTP apropriado.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>APIHandler</code> interage diretamente com o <code>AuthHandler</code> para autenticação, com o <code>DatabaseHandler</code> para operações de dados e, crucialmente, com o <code>HookHandler</code> para permitir a extensibilidade da API via plugins. Isso significa que desenvolvedores de plugins podem adicionar novos endpoints ou modificar o comportamento dos existentes sem tocar no código principal do <code>APIHandler</code>.</p>
+        <h3 id="hookhandler.php"><code>HookHandler.php</code></h3>
+        <p>O <code>HookHandler</code> é a espinha dorsal da modularidade e extensibilidade do CoreCRM, implementando um sistema de</p>
+        <p>ganchos (hooks) e ações (actions) inspirado em sistemas como o WordPress. Este mecanismo permite que funções de callback sejam registradas e executadas em pontos específicos do ciclo de vida da aplicação, sem a necessidade de modificar o código-fonte principal.</p>
+        <p><strong>Conceitos Chave:</strong></p>
+        <ul>
+        <li><strong>Ações (Actions)</strong>: São eventos disparados em momentos predefinidos do código. Por exemplo, <code>do_action('user_login')</code> pode ser disparado após um usuário fazer login.</li>
+        <li><strong>Hooks (Ganchos)</strong>: São funções de callback que se</li>
+        </ul>
+        <p>engatam a essas ações. Eles podem ser executados <code>before</code> (antes) ou <code>after</code> (depois) da ação principal, e podem ter uma <code>priority</code> (prioridade) que determina a ordem de execução.</p>
+        <p><strong>Métodos Chave:</strong></p>
+        <ul>
+        <li><strong><code>register_hook($actionName, $callback, $when = 'after', $priority = 10)</code></strong>: Permite que desenvolvedores registrem suas funções (<code>$callback</code>) para serem executadas quando uma <code>$actionName</code> específica for disparada. O parâmetro <code>$when</code> define se o hook será executado antes ou depois da ação principal, e <code>$priority</code> define a ordem de execução (menor número executa primeiro).</li>
+        <li><strong><code>do_action($actionName, $args = [], $actionCallback = null)</code></strong>: Este é o método que dispara uma ação. Ele executa todos os hooks registrados para <code>$actionName</code> com <code>$when = 'before'</code>, em seguida, executa a <code>$actionCallback</code> (se fornecida), e finalmente executa todos os hooks registrados com <code>$when = 'after'</code>. Os <code>$args</code> são passados para todas as funções de callback.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>HookHandler</code> é um componente central para a extensibilidade do CoreCRM. Ele permite que plugins e módulos se integrem profundamente ao sistema sem modificar o código-fonte principal. Isso é crucial para a manutenção e atualização do sistema, pois garante que as personalizações não sejam perdidas com as novas versões. Outros handlers, como <code>APIHandler</code>, utilizam <code>do_action</code> para criar pontos de extensão.</p>
+        <h3 id="authhandler.php"><code>AuthHandler.php</code></h3>
+        <p>O <code>AuthHandler</code> é responsável por todo o ciclo de vida da autenticação e autorização de usuários no CoreCRM. Ele gerencia sessões, logins, logouts e verifica permissões, garantindo que apenas usuários autorizados acessem recursos protegidos.</p>
+        <p><strong>Métodos Chave:</strong></p>
+        <ul>
+        <li><strong><code>init()</code></strong>: Inicializa o sistema de autenticação, garantindo que uma sessão PHP esteja ativa. Este método é fundamental para o funcionamento de todas as outras funcionalidades de autenticação.</li>
+        <li><strong><code>isLoggedIn()</code></strong>: Retorna <code>true</code> se um usuário estiver logado (ou seja, se <code>$_SESSION["user_id"]</code> estiver definido), e <code>false</code> caso contrário.</li>
+        <li><strong><code>requireAuth()</code></strong>: Um método de conveniência que verifica se o usuário está logado. Se não estiver, ele redireciona o usuário para a página de login, protegendo rotas e recursos.</li>
+        <li><strong><code>checkPermission($permission)</code></strong>: Verifica se o usuário logado possui uma permissão específica. Atualmente, a implementação é um placeholder simples que concede todas as permissões a usuários com a função</li>
+        </ul>
+        <p><code>admin</code>. Em uma implementação completa, isso envolveria a consulta a um sistema de controle de acesso baseado em funções (RBAC) ou em atributos (ABAC). * <strong><code>login($userId, $userRole)</code></strong>: Realiza o login do usuário, armazenando o <code>$userId</code> e <code>$userRole</code> na sessão. Isso estabelece o estado de autenticação do usuário. * <strong><code>logout()</code></strong>: Encerra a sessão do usuário, removendo as informações de autenticação e redirecionando o usuário para a página inicial ou de login. * <strong><code>hashPassword($password)</code></strong>: Utiliza funções seguras de hashing (como <code>password_hash</code> do PHP) para criar um hash da senha fornecida. Essencial para armazenar senhas de forma segura no banco de dados. * <strong><code>verifyPassword($password, $hash)</code></strong>: Verifica se uma senha em texto plano corresponde a um hash armazenado, utilizando <code>password_verify</code> do PHP. * <strong><code>redirect($url)</code></strong>: Uma função auxiliar para redirecionar o navegador do usuário para uma URL específica.</p>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>AuthHandler</code> é um componente crítico que interage com quase todas as partes do sistema que exigem controle de acesso. Ele é chamado pelo <code>APIHandler</code> para autenticar requisições e por controladores de página para proteger rotas. A integração com o <code>DatabaseHandler</code> seria necessária para buscar credenciais de usuário e informações de permissão.</p>
+        <h3 id="databasehandler.php"><code>DatabaseHandler.php</code></h3>
+        <p>O <code>DatabaseHandler</code> é a camada de abstração para a interação com o banco de dados. Ele gerencia a conexão, a execução de consultas SQL e a manipulação de erros, suportando diferentes drivers de banco de dados (MySQL e SQLite).</p>
+        <p><strong>Métodos Chave:</strong></p>
+        <ul>
+        <li><strong><code>init()</code></strong>: Inicializa o manipulador de banco de dados, carregando as configurações de <code>config/database.config.php</code> e chamando <code>connect()</code> para estabelecer a conexão.</li>
+        <li><strong><code>connect()</code></strong>: Estabelece a conexão PDO com o banco de dados. Ele lê as configurações (driver, host, database, username, password, charset, collation) e configura o PDO para lidar com erros e modos de busca. Lança exceções em caso de falha na conexão ou driver não suportado.</li>
+        <li><strong><code>getConnection()</code></strong>: Retorna a instância da conexão PDO ativa, permitindo que outros componentes executem operações de banco de dados diretamente, se necessário.</li>
+        <li><strong><code>query($sql, $params = [])</code></strong>: Executa uma consulta SQL preparada. Este método é fundamental para prevenir ataques de injeção SQL, pois os parâmetros são vinculados separadamente da consulta. Retorna um objeto <code>PDOStatement</code>.</li>
+        <li><strong><code>execute($sql, $params = [])</code></strong>: Um método de conveniência para executar consultas que não retornam resultados (INSERT, UPDATE, DELETE). Retorna <code>true</code> em caso de sucesso, <code>false</code> em caso de falha.</li>
+        <li><strong><code>fetch($sql, $params = [])</code></strong>: Executa uma consulta e retorna uma única linha de resultado como um array associativo.</li>
+        <li><strong><code>fetchAll($sql, $params = [])</code></strong>: Executa uma consulta e retorna todas as linhas de resultado como um array de arrays associativos.</li>
+        <li><strong><code>lastInsertId()</code></strong>: Retorna o ID da última linha inserida em uma tabela com uma coluna de auto-incremento.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>DatabaseHandler</code> é utilizado por componentes como <code>APIHandler</code> e <code>AuthHandler</code> para persistir e recuperar dados. A classe <code>QueryBuilder</code> (mencionada no <code>APIHandler</code>) provavelmente utiliza o <code>DatabaseHandler</code> internamente para construir e executar consultas de forma mais abstrata e orientada a objetos.</p>
+        <h3 id="pluginhandler.php"><code>PluginHandler.php</code></h3>
+        <p>Embora não totalmente detalhado na análise inicial, o <code>PluginHandler</code> é o componente responsável por descobrir, carregar e gerenciar os plugins instalados no sistema. Ele provavelmente lê os arquivos <code>plugin.json</code> para obter metadados e inclui os arquivos <code>main.php</code> dos plugins para ativar suas funcionalidades.</p>
+        <p><strong>Funções Esperadas:</strong></p>
+        <ul>
+        <li><strong><code>loadPlugins()</code></strong>: Percorre o diretório <code>plugins/</code>, identifica os subdiretórios de plugins, lê seus <code>plugin.json</code> e carrega seus <code>main.php</code>.</li>
+        <li><strong><code>getPluginInfo($slug)</code></strong>: Retorna informações detalhadas sobre um plugin específico.</li>
+        <li><strong><code>activatePlugin($slug)</code> / <code>deactivatePlugin($slug)</code></strong>: Gerencia o estado de ativação dos plugins.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>PluginHandler</code> interage com o sistema de arquivos para carregar os plugins e, uma vez carregados, os plugins interagem com o <code>HookHandler</code> para estender as funcionalidades do CoreCRM.</p>
+        <h3 id="routeshandler.php"><code>RoutesHandler.php</code></h3>
+        <p>O <code>RoutesHandler</code> é o componente encarregado de gerenciar o roteamento dinâmico das requisições HTTP para as funções ou controladores apropriados dentro do CoreCRM. Ele interpreta a URL da requisição e a mapeia para a lógica de aplicação correspondente.</p>
+        <p><strong>Funções Esperadas:</strong></p>
+        <ul>
+        <li><strong><code>handleRequest()</code></strong>: Analisa a URL da requisição e despacha para o módulo ou plugin correto.</li>
+        <li><strong><code>addRoute($path, $callback)</code></strong>: Permite o registro programático de novas rotas.</li>
+        <li><strong><code>getRoute($path)</code></strong>: Retorna informações sobre uma rota registrada.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>RoutesHandler</code> é um dos primeiros componentes a ser invocado no ciclo de vida de uma requisição, provavelmente a partir do <code>index.php</code> ou <code>bootstrap.php</code>. Ele interage com os plugins para descobrir rotas definidas por eles (conforme indicado no <code>plugin.json</code>).</p>
+        <h3 id="themehandler.php"><code>ThemeHandler.php</code></h3>
+        <p>O <code>ThemeHandler</code> é responsável por gerenciar os temas visuais do CoreCRM. Ele permite que a interface do usuário seja personalizada e alterada sem afetar a lógica de negócio subjacente.</p>
+        <p><strong>Funções Esperadas:</strong></p>
+        <ul>
+        <li><strong><code>loadTheme($themeName)</code></strong>: Carrega os arquivos e recursos de um tema específico.</li>
+        <li><strong><code>getActiveTheme()</code></strong>: Retorna o tema atualmente ativo.</li>
+        <li><strong><code>render($template, $data)</code></strong>: Renderiza um template de tema, passando dados para ele.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>ThemeHandler</code> interage com o sistema de arquivos para carregar os arquivos de tema e com os controladores para renderizar as views. Ele é crucial para a apresentação do CoreCRM.</p>
+        <h3 id="uuidhandler.php"><code>UuidHandler.php</code></h3>
+        <p>O <code>UuidHandler</code> é uma classe utilitária dedicada à geração de Identificadores Únicos Universais (UUIDs). UUIDs são frequentemente usados para gerar identificadores únicos para registros de banco de dados, sessões ou outros elementos que requerem unicidade global.</p>
+        <p><strong>Funções Esperadas:</strong></p>
+        <ul>
+        <li><strong><code>generate()</code></strong>: Gera e retorna um novo UUID.</li>
+        </ul>
+        <p><strong>Interação:</strong></p>
+        <p>O <code>UuidHandler</code> é uma dependência para qualquer parte do sistema que precise de identificadores únicos, como a criação de novos usuários, clientes ou plugins.</p>
+        <h2 id="fluxo-de-execução-alto-nível">Fluxo de Execução (Alto Nível)</h2>
+        <ol type="1">
+        <li><strong><code>index.php</code></strong>: Ponto de entrada da aplicação.</li>
+        <li><strong><code>bootstrap.php</code></strong>: Inicializa o sistema, provavelmente chamando <code>System::init()</code>, <code>AuthHandler::init()</code>, <code>DatabaseHandler::init()</code>, e carregando o <code>RoutesHandler</code>.</li>
+        <li><strong><code>RoutesHandler</code></strong>: Analisa a URL da requisição e determina qual controlador ou função deve ser executada.</li>
+        <li><strong>Controladores/Plugins</strong>: A lógica de negócio é executada, interagindo com <code>DatabaseHandler</code> para dados, <code>AuthHandler</code> para autenticação/autorização, e <code>HookHandler</code> para estender funcionalidades.</li>
+        <li><strong><code>ThemeHandler</code></strong>: Renderiza a interface do usuário com base no tema ativo.</li>
+        <li><strong><code>APIHandler</code></strong>: Se a requisição for para um endpoint da API, o <code>APIHandler</code> assume o controle, autentica e processa a requisição, retornando uma resposta JSON.</li>
+        </ol>
+        <p>Esta arquitetura modular permite que o CoreCRM seja facilmente estendido e mantido, com cada componente tendo uma responsabilidade clara e bem definida.</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

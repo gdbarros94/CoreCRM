@@ -1,7 +1,29 @@
 <?php
+/**
+ * Class System
+ *
+ * Esta classe é responsável pela inicialização e gerenciamento do sistema.
+ * Ela inclui funcionalidades para verificar a integridade do sistema, 
+ * gerenciar logs e registrar mensagens de log.
+ *
+ * Métodos principais:
+ * - init: Inicializa o sistema e realiza verificações de saúde.
+ * - healthCheck: Verifica se o sistema está em condições de funcionar corretamente.
+ * - logMessage: Registra uma mensagem em um arquivo de log especificado.
+ * - log: Registra uma mensagem no arquivo de log do sistema com um nível de severidade.
+ * - getLogs: Retorna os últimos logs para visualização na interface administrativa.
+ */
 
 class System
 {
+    /**
+     * Inicializa o sistema.
+     *
+     * Verifica a integridade do sistema e configura o gerenciamento de logs.
+     * Essa função DEVE ser chamada apenas uma vez, na inicialização do sistema.
+     *
+     * @return void
+     */
     public static function init()
     {
         // Health check
@@ -14,6 +36,14 @@ class System
         //self::setupLogging();
     }
 
+    /**
+     * Verifica a integridade do sistema.
+     *
+     * Esta função verifica se o sistema está em condições de funcionar corretamente.
+     * Implemente aqui verificações de saúde do sistema, como permissões de pasta, extensões PHP necessárias, etc.
+     *
+     * @return void
+     */
     private static function healthCheck()
     {
         // Implementar verificações de saúde do sistema aqui
@@ -21,6 +51,17 @@ class System
         error_log('System health check completed.');
     }
 
+    /**
+     * Registra uma mensagem no arquivo de log especificado.
+     *
+     * Cria o diretório e o arquivo de log se eles não existirem.
+     * Escreve a mensagem no final do arquivo.
+     *
+     * @param string $logFile Caminho do arquivo de log.
+     * @param string $message  Mensagem a ser registrada no log.
+     *
+     * @throws RuntimeException Se não for possível criar o diretório ou arquivo de log.
+     */
     function logMessage($logFile, $message)
     {
         $logDir = dirname($logFile);
@@ -47,6 +88,17 @@ class System
         file_put_contents($logFile, $message . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 
+    /**
+     * Registra uma mensagem no arquivo de log do sistema.
+     *
+     * O nível de log pode ser especificado como 'info', 'warning' ou 'error'.
+     * Se o nível não for especificado, o padrão é 'info'.
+     *
+     * @param string $message Mensagem a ser registrada no log.
+     * @param string $level   Nível do log (info, warning, error).
+     *
+     * @return void
+     */
     public static function log($message, $level = 'info')
     {
         // Centralizar a gestão de logs
@@ -55,6 +107,14 @@ class System
         file_put_contents(__DIR__ . '/../logs/system.log', $logEntry, FILE_APPEND);
     }
 
+    /**
+     * Retorna os últimos logs para visualização na interface /admin.
+     *
+     * @param int $limit Quantidade de linhas de log a serem retornadas.
+     *                    O padrão é 100.
+     *
+     * @return array
+     */
     public static function getLogs($limit = 100)
     {
         // Retorna os últimos logs para visualização na interface /admin

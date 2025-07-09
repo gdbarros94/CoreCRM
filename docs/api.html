@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API REST do CoreCRM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="api-rest-do-corecrm">API REST do CoreCRM</h1>
+        <p>A API REST do CoreCRM permite a comunicação programática com o sistema, facilitando a integração com outras aplicações e serviços. Ela é gerenciada pela classe <code>APIHandler.php</code> e utiliza um sistema de autenticação baseado em token.</p>
+        <h2 id="autenticação">Autenticação</h2>
+        <p>Todas as requisições à API exigem autenticação via token. O token deve ser enviado no cabeçalho <code>Authorization</code> no formato <code>Bearer &lt;seu_token&gt;</code>. Atualmente, o sistema utiliza um token de placeholder simples (<code>your_secret_api_token</code>). Em um ambiente de produção, é altamente recomendável implementar um mecanismo de autenticação mais robusto, como JWT (JSON Web Tokens) ou chaves de API geradas dinamicamente.</p>
+        <p><strong>Exemplo de Cabeçalho de Autenticação:</strong></p>
+        <pre><code>Authorization: Bearer your_secret_api_token</code></pre>
+        <h2 id="endpoints-da-api">Endpoints da API</h2>
+        <p>Os endpoints da API são roteados pelo <code>APIHandler</code> e podem ser estendidos por plugins através do sistema de hooks. Abaixo, detalhamos os endpoints de exemplo e como interagir com eles.</p>
+        <h3 id="get-apiclienteslistar"><code>GET /api/clientes/listar</code></h3>
+        <p>Este endpoint retorna uma lista de todos os clientes registrados no sistema.</p>
+        <ul>
+        <li><p><strong>Método:</strong> <code>GET</code></p></li>
+        <li><p><strong>URL:</strong> <code>/api/clientes/listar</code></p></li>
+        <li><p><strong>Autenticação:</strong> Necessária</p></li>
+        <li><p><strong>Resposta (Sucesso - 200 OK):</strong></p>
+        <div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">[</span></span>
+        <span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>    <span class="fu">{</span></span>
+        <span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+        <span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>        <span class="dt">&quot;nome&quot;</span><span class="fu">:</span> <span class="st">&quot;Cliente Exemplo 1&quot;</span><span class="fu">,</span></span>
+        <span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>        <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;cliente1@example.com&quot;</span></span>
+        <span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+        <span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>    <span class="fu">{</span></span>
+        <span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>        <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+        <span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>        <span class="dt">&quot;nome&quot;</span><span class="fu">:</span> <span class="st">&quot;Cliente Exemplo 2&quot;</span><span class="fu">,</span></span>
+        <span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>        <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;cliente2@example.com&quot;</span></span>
+        <span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>    <span class="fu">}</span></span>
+        <span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a><span class="ot">]</span></span></code></pre></div></li>
+        <li><p><strong>Resposta (Erro - 401 Unauthorized):</strong></p>
+        <div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">{</span></span>
+        <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>    <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Unauthorized&quot;</span></span>
+        <span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div></li>
+        </ul>
+        <h3 id="post-apiusuariosnovo"><code>POST /api/usuarios/novo</code></h3>
+        <p>Este endpoint permite a criação de um novo usuário no sistema.</p>
+        <ul>
+        <li><p><strong>Método:</strong> <code>POST</code></p></li>
+        <li><p><strong>URL:</strong> <code>/api/usuarios/novo</code></p></li>
+        <li><p><strong>Autenticação:</strong> Necessária</p></li>
+        <li><p><strong>Corpo da Requisição (JSON):</strong></p>
+        <div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">{</span></span>
+        <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>    <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;novo_usuario&quot;</span><span class="fu">,</span></span>
+        <span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;senha_segura&quot;</span></span>
+        <span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div></li>
+        <li><p><strong>Resposta (Sucesso - 200 OK):</strong></p>
+        <div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="fu">{</span></span>
+        <span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>    <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;User created successfully.&quot;</span><span class="fu">,</span></span>
+        <span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>    <span class="dt">&quot;user_id&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+        <span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div></li>
+        <li><p><strong>Resposta (Erro - 400 Bad Request - Campos Faltando):</strong></p>
+        <div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="fu">{</span></span>
+        <span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>    <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Username and password are required.&quot;</span></span>
+        <span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div></li>
+        <li><p><strong>Resposta (Erro - 401 Unauthorized):</strong></p>
+        <div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">{</span></span>
+        <span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a>    <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Unauthorized&quot;</span></span>
+        <span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div></li>
+        </ul>
+        <h2 id="estendendo-a-api-com-hooks">Estendendo a API com Hooks</h2>
+        <p>O <code>APIHandler</code> utiliza o <code>HookHandler</code> para permitir que plugins adicionem novos endpoints ou modifiquem o comportamento dos endpoints existentes. Quando um endpoint não é encontrado nos casos padrão do <code>switch</code> dentro de <code>handleRequest</code>, o <code>APIHandler</code> dispara um hook dinâmico:</p>
+        <div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a>HookHandler::do_action<span class="ot">(</span><span class="st">&quot;api_&quot;</span> . <span class="fu">str_replace</span><span class="ot">(</span><span class="st">&quot;/&quot;</span><span class="ot">,</span> <span class="st">&quot;_&quot;</span><span class="ot">,</span> <span class="kw">$endpoint</span><span class="ot">),</span> <span class="ot">[],</span> <span class="kw">function</span><span class="ot">()</span> <span class="kw">use</span> <span class="ot">(</span><span class="kw">$endpoint</span><span class="ot">)</span> {</span>
+        <span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>    self::sendJsonResponse<span class="ot">([</span><span class="st">&quot;error&quot;</span> =&gt; <span class="st">&quot;API endpoint not found: </span><span class="kw">{$endpoint}</span><span class="st">&quot;</span><span class="ot">],</span> <span class="dv">404</span><span class="ot">);</span></span>
+        <span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>}<span class="ot">);</span></span></code></pre></div>
+        <p>Isso significa que um plugin pode registrar um hook para <code>api_&lt;nome_do_endpoint_com_underline&gt;</code> e interceptar a requisição antes que o erro 404 seja enviado. Por exemplo, para criar um endpoint <code>/api/produtos/listar</code>:</p>
+        <div class="sourceCode" id="cb9"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="co">// No arquivo main.php do seu plugin</span></span>
+        <span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a></span>
+        <span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>HookHandler::register_hook<span class="ot">(</span></span>
+        <span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>    <span class="st">&quot;api_produtos_listar&quot;</span><span class="ot">,</span></span>
+        <span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a>    <span class="kw">function</span><span class="ot">()</span> {</span>
+        <span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a>        <span class="co">// Lógica para listar produtos</span></span>
+        <span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a>        <span class="kw">$produtos</span> = <span class="ot">[</span></span>
+        <span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a>            <span class="ot">[</span><span class="st">&quot;id&quot;</span> =&gt; <span class="dv">1</span><span class="ot">,</span> <span class="st">&quot;nome&quot;</span> =&gt; <span class="st">&quot;Produto A&quot;</span><span class="ot">,</span> <span class="st">&quot;preco&quot;</span> =&gt; <span class="fl">100.00</span><span class="ot">],</span></span>
+        <span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a>            <span class="ot">[</span><span class="st">&quot;id&quot;</span> =&gt; <span class="dv">2</span><span class="ot">,</span> <span class="st">&quot;nome&quot;</span> =&gt; <span class="st">&quot;Produto B&quot;</span><span class="ot">,</span> <span class="st">&quot;preco&quot;</span> =&gt; <span class="fl">200.00</span><span class="ot">]</span></span>
+        <span id="cb9-10"><a href="#cb9-10" aria-hidden="true"></a>        <span class="ot">];</span></span>
+        <span id="cb9-11"><a href="#cb9-11" aria-hidden="true"></a>        APIHandler::sendJsonResponse<span class="ot">(</span><span class="kw">$produtos</span><span class="ot">);</span></span>
+        <span id="cb9-12"><a href="#cb9-12" aria-hidden="true"></a>    }<span class="ot">,</span></span>
+        <span id="cb9-13"><a href="#cb9-13" aria-hidden="true"></a>    <span class="st">&quot;before&quot;</span> <span class="co">// Executa antes do erro 404</span></span>
+        <span id="cb9-14"><a href="#cb9-14" aria-hidden="true"></a><span class="ot">);</span></span></code></pre></div>
+        <p>Ao registrar o hook com <code>"before"</code>, você garante que sua função será executada antes que o <code>APIHandler</code> retorne o erro de</p>
+        <p>endpoint não encontrado. Isso permite que você crie endpoints personalizados para seus plugins.</p>
+        <h2 id="métodos-e-classes-essenciais-para-interação-com-a-api">Métodos e Classes Essenciais para Interação com a API</h2>
+        <p>Ao desenvolver com a API do CoreCRM, você interagirá com várias classes e métodos principais. Abaixo, detalhamos os mais relevantes:</p>
+        <h3 id="system"><code>System</code></h3>
+        <p>A classe <code>System</code> fornece funcionalidades básicas de sistema, incluindo logging, que é essencial para depuração e monitoramento das interações da API.</p>
+        <ul>
+        <li><strong><code>System::log(string $message, string $level = 'info')</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Registra uma mensagem no arquivo de log do sistema. Útil para depurar requisições da API e entender o fluxo de execução.</li>
+        <li><strong>Parâmetros:</strong>
+        <ul>
+        <li><code>$message</code> (string): A mensagem a ser registrada.</li>
+        <li><code>$level</code> (string, opcional): O nível de severidade do log (<code>'info'</code>, <code>'warning'</code>, <code>'error'</code>). Padrão é <code>'info'</code>.</li>
+        </ul></li>
+        <li><strong>Exemplo:</strong> <code>php     System::log("Requisição API recebida para: " . $endpoint, "info");     System::log("Erro de autenticação na API.", "error");</code></li>
+        </ul></li>
+        </ul>
+        <h3 id="authhandler"><code>AuthHandler</code></h3>
+        <p>A classe <code>AuthHandler</code> é crucial para gerenciar a autenticação e autorização de usuários, o que é fundamental para proteger seus endpoints de API e recursos.</p>
+        <ul>
+        <li><strong><code>AuthHandler::isLoggedIn(): bool</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Verifica se um usuário está atualmente logado no sistema. Embora a API tenha sua própria autenticação, este método pode ser útil para endpoints que também dependem do estado de login de um usuário de sessão.</li>
+        <li><strong>Retorno:</strong> <code>true</code> se o usuário estiver logado, <code>false</code> caso contrário.</li>
+        </ul></li>
+        <li><strong><code>AuthHandler::checkPermission(string $permission): bool</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Verifica se o usuário logado possui uma permissão específica. Pode ser usado dentro de seus endpoints de API personalizados para controlar o acesso a recursos específicos.</li>
+        <li><strong>Parâmetros:</strong>
+        <ul>
+        <li><code>$permission</code> (string): O nome da permissão a ser verificada (e.g., <code>'manage_users'</code>, <code>'view_reports'</code>).</li>
+        </ul></li>
+        <li><strong>Retorno:</strong> <code>true</code> se o usuário tiver a permissão, <code>false</code> caso contrário.</li>
+        <li><strong>Exemplo:</strong> <code>php     if (!AuthHandler::checkPermission("api_write_access")) {         APIHandler::sendJsonResponse(["error" =&gt; "Forbidden"], 403);         return;     }</code></li>
+        </ul></li>
+        </ul>
+        <h3 id="databasehandler-e-querybuilder"><code>DatabaseHandler</code> e <code>QueryBuilder</code></h3>
+        <p>Para interagir com o banco de dados a partir de seus endpoints de API, você usará o <code>DatabaseHandler</code> e a classe <code>QueryBuilder</code> (que o <code>APIHandler</code> já utiliza internamente).</p>
+        <ul>
+        <li><strong><code>DatabaseHandler::getConnection(): PDO</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Retorna a instância da conexão PDO ativa com o banco de dados. Permite executar consultas SQL diretas se o <code>QueryBuilder</code> não for suficiente para um caso de uso específico.</li>
+        <li><strong>Retorno:</strong> Uma instância de <code>PDO</code>.</li>
+        </ul></li>
+        <li><strong><code>DatabaseHandler::query(string $sql, array $params = []): PDOStatement</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Executa uma consulta SQL preparada com parâmetros. Essencial para consultas seguras e eficientes.</li>
+        <li><strong>Parâmetros:</strong>
+        <ul>
+        <li><code>$sql</code> (string): A consulta SQL a ser executada.</li>
+        <li><code>$params</code> (array, opcional): Um array associativo de parâmetros para a consulta preparada.</li>
+        </ul></li>
+        <li><strong>Retorno:</strong> Um objeto <code>PDOStatement</code>.</li>
+        <li><strong>Exemplo:</strong> <code>php     $stmt = DatabaseHandler::query("SELECT * FROM produtos WHERE categoria = :cat", [":cat" =&gt; "eletronicos"]);     $produtos = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);     APIHandler::sendJsonResponse($produtos);</code></li>
+        </ul></li>
+        <li><strong><code>DatabaseHandler::fetch(string $sql, array $params = []): array|false</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Executa uma consulta SQL e retorna uma única linha de resultado.</li>
+        <li><strong>Retorno:</strong> Um array associativo representando a linha, ou <code>false</code> se nenhum resultado for encontrado.</li>
+        </ul></li>
+        <li><strong><code>DatabaseHandler::fetchAll(string $sql, array $params = []): array</code></strong>
+        <ul>
+        <li><strong>Descrição:</strong> Executa uma consulta SQL e retorna todas as linhas de resultado.</li>
+        <li><strong>Retorno:</strong> Um array de arrays associativos, ou um array vazio se nenhum resultado for encontrado.</li>
+        </ul></li>
+        <li><strong><code>QueryBuilder</code> (Exemplo de Uso)</strong>
+        <ul>
+        <li>A classe <code>QueryBuilder</code> simplifica a construção de consultas SQL. Embora não seja um handler no diretório <code>core/</code>, ela é usada extensivamente para operações de banco de dados.</li>
+        <li><strong>Exemplo de SELECT:</strong> <code>php     $clientes = (new QueryBuilder("clients"))-&gt;select()-&gt;where("status", "active")-&gt;get();     APIHandler::sendJsonResponse($clientes);</code></li>
+        <li><strong>Exemplo de INSERT:</strong> <code>php     (new QueryBuilder("users"))-&gt;insert(["username" =&gt; "testuser", "password" =&gt; "hashed_password"]);</code></li>
+        <li><strong>Exemplo de UPDATE:</strong> <code>php     (new QueryBuilder("clients"))-&gt;where("id", 1)-&gt;update(["email" =&gt; "novo@email.com"]);</code></li>
+        <li><strong>Exemplo de DELETE:</strong> <code>php     (new QueryBuilder("products"))-&gt;where("id", 5)-&gt;delete();</code></li>
+        </ul></li>
+        </ul>
+        <p>Ao utilizar esses métodos e classes, você pode construir endpoints de API robustos e seguros, integrando-se profundamente com as funcionalidades do CoreCRM.</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

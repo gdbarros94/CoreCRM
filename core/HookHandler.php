@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * Classe HookHandler
+ *
+ * Esta classe gerencia a implementação de hooks (ganchos) que permitem a execução de funções de callback
+ * em momentos específicos durante a execução de ações. Os hooks podem ser registrados para serem executados
+ * antes ou depois de uma ação específica, permitindo a extensão e personalização do comportamento do sistema.
+ *
+ * Exemplos de uso incluem a adição de funcionalidades extras antes ou depois de gerar relatórios, processar
+ * dados, ou qualquer outra ação que possa ser estendida.
+ *
+ * Métodos:
+ * - register_hook: Registra um hook para uma ação específica.
+ * - do_action: Executa uma ação, acionando os hooks 'before' e 'after' associados.
+ */
+
 class HookHandler
 {
     private static $hooks = [];

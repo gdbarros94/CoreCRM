@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instalação e Configuração do CoreCRM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="instalação-e-configuração-do-corecrm">Instalação e Configuração do CoreCRM</h1>
+        <p>Este guia detalha os passos necessários para instalar e configurar o CoreCRM em seu ambiente de desenvolvimento ou produção. Certifique-se de que seu sistema atende aos requisitos mínimos antes de prosseguir com a instalação.</p>
+        <h2 id="requisitos-do-sistema">Requisitos do Sistema</h2>
+        <p>Para executar o CoreCRM, você precisará dos seguintes componentes:</p>
+        <ul>
+        <li><strong>PHP 8.x+</strong>: O CoreCRM é desenvolvido em PHP e requer a versão 8.x ou superior para compatibilidade e desempenho.</li>
+        <li><strong>MySQL ou SQLite</strong>: Um sistema de gerenciamento de banco de dados relacional. O CoreCRM suporta tanto MySQL quanto SQLite para armazenamento de dados.</li>
+        <li><strong>Servidor Web com Suporte a URL Rewriting</strong>: Um servidor web como Apache ou Nginx é necessário, configurado para suportar reescrita de URL (mod_rewrite para Apache ou configurações equivalentes para Nginx). Isso é essencial para o roteamento dinâmico do CoreCRM.</li>
+        </ul>
+        <h2 id="passos-de-instalação">Passos de Instalação</h2>
+        <p>Siga os passos abaixo para instalar o CoreCRM:</p>
+        <ol type="1">
+        <li><p><strong>Clone o Repositório:</strong></p>
+        <p>Abra seu terminal ou prompt de comando e clone o repositório do CoreCRM para o diretório desejado:</p>
+        <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/gdbarros94/CoreCRM.git</span>
+        <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="bu">cd</span> CoreCRM</span></code></pre></div></li>
+        <li><p><strong>Instale as Dependências do Composer:</strong></p>
+        <p>O CoreCRM utiliza o Composer para gerenciar suas dependências PHP. Certifique-se de ter o Composer instalado globalmente ou use o <code>composer.phar</code> que pode ser encontrado no repositório. Execute o seguinte comando no diretório raiz do projeto:</p>
+        <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">composer</span> install</span></code></pre></div>
+        <p><em>Se você não tiver o Composer instalado globalmente, pode usar o <code>composer.phar</code> diretamente:</em> <code>php composer.phar install</code></p></li>
+        <li><p><strong>Configure o Banco de Dados:</strong></p>
+        <p>O CoreCRM precisa de um banco de dados para armazenar seus dados. Você precisará configurar as credenciais de conexão no arquivo <code>config/database.config.php</code>. Este arquivo define o driver do banco de dados (MySQL ou SQLite), host, nome do banco de dados, usuário e senha.</p>
+        <p><strong>Exemplo para MySQL (<code>config/database.config.php</code>):</strong></p>
+        <div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">&lt;?php</span></span>
+        <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="kw">return</span> <span class="ot">[</span></span>
+        <span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>    <span class="st">&#39;driver&#39;</span>    =&gt; <span class="st">&#39;mysql&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>    <span class="st">&#39;host&#39;</span>      =&gt; <span class="st">&#39;localhost&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>    <span class="st">&#39;database&#39;</span>  =&gt; <span class="st">&#39;corecrm_db&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    <span class="st">&#39;username&#39;</span>  =&gt; <span class="st">&#39;root&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>    <span class="st">&#39;password&#39;</span>  =&gt; <span class="st">&#39;sua_senha&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>    <span class="st">&#39;charset&#39;</span>   =&gt; <span class="st">&#39;utf8mb4&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>    <span class="st">&#39;collation&#39;</span> =&gt; <span class="st">&#39;utf8mb4_unicode_ci&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>    <span class="st">&#39;prefix&#39;</span>    =&gt; <span class="st">&#39;&#39;</span><span class="ot">,</span></span>
+        <span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a><span class="ot">];</span></span></code></pre></div>
+        <p><strong>Exemplo para SQLite (<code>config/database.config.php</code>):</strong></p>
+        <div class="sourceCode" id="cb4"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">&lt;?php</span></span>
+        <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="kw">return</span> <span class="ot">[</span></span>
+        <span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>    <span class="st">&#39;driver&#39;</span>   =&gt; <span class="st">&#39;sqlite&#39;</span><span class="ot">,</span></span>
+        <span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>    <span class="st">&#39;database&#39;</span> =&gt; <span class="st">&#39;database.sqlite&#39;</span><span class="ot">,</span> <span class="co">// Caminho para o arquivo SQLite</span></span>
+        <span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="ot">];</span></span></code></pre></div>
+        <p>*Crie o banco de dados (<code>corecrm_db</code> no exemplo MySQL) manualmente ou através de ferramentas como phpMyAdmin ou o cliente MySQL/SQLite.</p></li>
+        <li><p><strong>Configure as Definições Globais do Sistema:</strong></p>
+        <p>O arquivo <code>config/config.php</code> contém configurações globais para o CoreCRM, como modo de depuração, fuso horário e nome da aplicação. Edite este arquivo para ajustar as configurações conforme suas necessidades.</p>
+        <p><strong>Exemplo (<code>config/config.php</code>):</strong></p>
+        <div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">&lt;?php</span></span>
+        <span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="kw">return</span> <span class="ot">[</span></span>
+        <span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>    <span class="st">&#39;app_name&#39;</span> =&gt; <span class="st">&#39;Meu CoreCRM&#39;</span><span class="ot">,</span></span>
+        <span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>    <span class="st">&#39;debug_mode&#39;</span> =&gt; <span class="kw">true</span><span class="ot">,</span> <span class="co">// Defina como false em produção</span></span>
+        <span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>    <span class="st">&#39;timezone&#39;</span> =&gt; <span class="st">&#39;America/Sao_Paulo&#39;</span><span class="ot">,</span></span>
+        <span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>    <span class="co">// Outras configurações...</span></span>
+        <span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="ot">];</span></span></code></pre></div></li>
+        <li><p><strong>Acesse a Aplicação:</strong></p>
+        <p>Após configurar o servidor web para apontar para o diretório raiz do CoreCRM (onde <code>index.php</code> está localizado), você pode acessar a aplicação através do seu navegador. Por exemplo, se você configurou um host virtual para <code>corecrm.local</code>, acesse <code>http://corecrm.local</code>.</p>
+        <p>O <code>index.php</code> é o ponto de entrada principal que inicializa o sistema e o roteamento.</p></li>
+        </ol>
+        <h2 id="configuração-do-servidor-web">Configuração do Servidor Web</h2>
+        <h3 id="apache">Apache</h3>
+        <p>Para Apache, certifique-se de que o módulo <code>mod_rewrite</code> esteja habilitado e que seu arquivo <code>.htaccess</code> (já incluído no repositório) esteja sendo respeitado. Um exemplo de configuração de Virtual Host pode ser:</p>
+        <div class="sourceCode" id="cb6"><pre class="sourceCode apache"><code class="sourceCode apache"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="fu">&lt;VirtualHost</span><span class="at"> *:80</span><span class="fu">&gt;</span></span>
+        <span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>    ServerName<span class="st"> corecrm.local</span></span>
+        <span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>    DocumentRoot<span class="st"> /caminho/para/seu/CoreCRM</span></span>
+        <span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a></span>
+        <span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>    <span class="fu">&lt;Directory</span><span class="at"> /caminho/para/seu/CoreCRM</span><span class="fu">&gt;</span></span>
+        <span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>        <span class="ex">AllowOverride</span><span class="ch"> </span><span class="kw">All</span></span>
+        <span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>        Require<span class="st"> all granted</span></span>
+        <span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>    <span class="fu">&lt;/Directory&gt;</span></span>
+        <span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a></span>
+        <span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a>    ErrorLog<span class="st"> ${APACHE_LOG_DIR}/error.log</span></span>
+        <span id="cb6-11"><a href="#cb6-11" aria-hidden="true"></a>    CustomLog<span class="st"> ${APACHE_LOG_DIR}/access.log combined</span></span>
+        <span id="cb6-12"><a href="#cb6-12" aria-hidden="true"></a><span class="fu">&lt;/VirtualHost&gt;</span></span></code></pre></div>
+        <h3 id="nginx">Nginx</h3>
+        <p>Para Nginx, você precisará de uma configuração similar para reescrever as URLs para <code>index.php</code>. Um exemplo de bloco <code>server</code> pode ser:</p>
+        <pre class="nginx"><code>server {
+            listen 80;
+            server_name corecrm.local;
+            root /caminho/para/seu/CoreCRM;
+
+            index index.php index.html index.htm;
+
+            location / {
+                try_files $uri $uri/ /index.php?$query_string;
+            }
+
+            location ~ \.php$ {
+                include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/var/run/php/php8.1-fpm.sock; # Verifique a versão do PHP-FPM
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+            }
+
+            location ~ /\.ht {
+                deny all;
+            }
+        }</code></pre>
+        <p>Após a instalação e configuração, seu CoreCRM estará pronto para uso e desenvolvimento.</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

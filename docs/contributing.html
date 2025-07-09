@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contribuindo para o Projeto CoreCRM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="contribuindo-para-o-projeto-corecrm">Contribuindo para o Projeto CoreCRM</h1>
+        <p>O CoreCRM é um projeto open-source e agradecemos qualquer contribuição da comunidade. Seja você um desenvolvedor, um testador ou um escritor de documentação, sua ajuda é valiosa. Este guia descreve como você pode contribuir para o projeto.</p>
+        <h2 id="como-contribuir">Como Contribuir</h2>
+        <p>Existem várias maneiras de contribuir para o CoreCRM:</p>
+        <ol type="1">
+        <li><strong>Reportar Bugs</strong>: Se você encontrar um bug, por favor, abra uma issue no repositório do GitHub.</li>
+        <li><strong>Sugerir Novas Funcionalidades</strong>: Tem uma ideia para uma nova funcionalidade? Abra uma issue para discutir.</li>
+        <li><strong>Contribuir com Código</strong>: Envie pull requests com melhorias, correções de bugs ou novas funcionalidades.</li>
+        <li><strong>Melhorar a Documentação</strong>: Ajude a tornar esta documentação ainda melhor, corrigindo erros, adicionando exemplos ou expandindo seções.</li>
+        <li><strong>Testar o Software</strong>: Ajude a identificar bugs e garantir a estabilidade do sistema.</li>
+        </ol>
+        <h2 id="reportando-bugs-e-sugerindo-funcionalidades">Reportando Bugs e Sugerindo Funcionalidades</h2>
+        <p>Antes de abrir uma nova issue, por favor, verifique se uma issue similar já não existe. Ao abrir uma issue, forneça o máximo de detalhes possível:</p>
+        <ul>
+        <li><strong>Para Bugs</strong>: Descreva os passos para reproduzir o bug, o comportamento esperado e o comportamento observado. Inclua mensagens de erro, logs e informações do ambiente (versão do PHP, servidor web, etc.).</li>
+        <li><strong>Para Sugestões</strong>: Descreva a funcionalidade que você gostaria de ver, por que ela seria útil e como você a imagina funcionando.</li>
+        </ul>
+        <h2 id="contribuindo-com-código">Contribuindo com Código</h2>
+        <p>Para contribuir com código, siga o fluxo de trabalho padrão do GitHub:</p>
+        <ol type="1">
+        <li><p><strong>Faça um Fork do Repositório</strong>: Crie um fork do repositório <code>gdbarros94/CoreCRM</code> para sua conta do GitHub.</p></li>
+        <li><p><strong>Clone seu Fork</strong>: Clone o repositório forkado para sua máquina local:</p>
+        <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="fu">git</span> clone https://github.com/SEU_USUARIO/CoreCRM.git</span>
+        <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="bu">cd</span> CoreCRM</span></code></pre></div></li>
+        <li><p><strong>Crie uma Nova Branch</strong>: Crie uma nova branch para suas alterações. Use um nome descritivo para a branch (e.g., <code>feature/nova-funcionalidade</code>, <code>bugfix/corrigir-erro-login</code>):</p>
+        <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">git</span> checkout -b minha-contribuicao</span></code></pre></div></li>
+        <li><p><strong>Faça suas Alterações</strong>: Implemente suas alterações, correções de bugs ou novas funcionalidades. Certifique-se de seguir as diretrizes de codificação do projeto (se houver).</p></li>
+        <li><p><strong>Teste suas Alterações</strong>: Antes de enviar, teste suas alterações para garantir que elas funcionam conforme o esperado e não introduzem novos bugs.</p></li>
+        <li><p><strong>Commit suas Alterações</strong>: Faça commits claros e concisos. Use mensagens de commit que descrevam o que foi alterado e por quê:</p>
+        <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">git</span> add .</span>
+        <span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="fu">git</span> commit -m <span class="st">&quot;feat: Adiciona nova funcionalidade X&quot;</span></span></code></pre></div></li>
+        <li><p><strong>Envie para seu Fork</strong>: Envie suas alterações para seu repositório forkado no GitHub:</p>
+        <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="fu">git</span> push origin minha-contribuicao</span></code></pre></div></li>
+        <li><p><strong>Abra um Pull Request</strong>: Vá para a página do seu repositório forkado no GitHub e abra um Pull Request para a branch <code>main</code> do repositório original <code>gdbarros94/CoreCRM</code>. Descreva suas alterações em detalhes e referencie quaisquer issues relacionadas.</p></li>
+        </ol>
+        <h2 id="diretrizes-de-codificação">Diretrizes de Codificação</h2>
+        <ul>
+        <li><strong>Padrões de Código</strong>: Tente seguir os padrões de código existentes no projeto. Se não houver padrões formais, use um estilo consistente.</li>
+        <li><strong>Comentários</strong>: Comente seu código onde for necessário para explicar a lógica complexa ou decisões de design.</li>
+        <li><strong>Testes</strong>: Se possível, inclua testes unitários ou de integração para suas alterações.</li>
+        </ul>
+        <h2 id="licença">Licença</h2>
+        <p>Ao contribuir com o CoreCRM, você concorda que suas contribuições serão licenciadas sob a mesma licença do projeto (MIT License).</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

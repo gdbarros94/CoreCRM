@@ -14,6 +14,7 @@
         <input type="password" id="password" name="password" required><br><br>
         <button type="submit">Entrar</button>
     </form>
+    <?php var_dump(PluginHandler::getActivePlugins());?>
     <?php if (!empty($error)) { echo '<p style="color:red">' . htmlspecialchars($error) . '</p>'; } ?>
     <!-- TODO: Adicionar proteção CSRF e limitação de tentativas para produção -->
 </body>
